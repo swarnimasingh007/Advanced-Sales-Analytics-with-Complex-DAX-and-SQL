@@ -1,43 +1,54 @@
-Project Overview
-The current project represents a full-fledged Data Analytics solution aimed at tracking the performance of a coffee shop in various locations. The technologies utilized within the project include the utilization of MySQL for data querying and validation purposes and Power BI for data visualization and dashboarding purposes.
+SELECT * FROM coffee_shop_sales
 
-Features & KPIs
-Within the current project, the key focus will be laid on the following KPIs and their analysis according to Month-over-Month change:
+SELECT COUNT(transaction_id) AS Total_Sales
+FROM coffee_shop_sales
+WHERE
+MONTH(transaction_date) = 5 -- March Month
 
-Total Sales Analysis: Revenue analysis and its MoM changes.
 
-Total Orders Analysis: Total number of orders.
 
-Total Quantity Sold: Number of products sold.
+SELECT
+	MONTH(transaction_date) As month,
+    ROUND(SUM(unit_price * transaction_qty)) As total_sales,
+    (SUM(unit_price * transaction_qty) - LAG(SUM(unit_price * transaction_qty), 1)
+    OVER (ORDER BY MONTH(transaction_date))) / LAG(SUM(unit_price * transaction_qty), 1)
+	OVER (ORDER BY MONTH(transaction_date)) * 100 As mom_increase_percentage
+FROM
+	coffee_shop_sales
+WHERE
+	MONTH(transaction_date) IN (4, 5) -- for months of april and may
+GROUP BY 
+	MONTH(transaction_date)
+    
+    
+    SELECT
+	MONTH(transaction_date) As month,
+    ROUND(COUNT(unit_price * transaction_id)) As total_sales,
+    (COUNT(unit_price * transaction_id) - LAG(COUNT(unit_price * transaction_id), 1)
+    OVER (ORDER BY MONTH(transaction_date))) / LAG(COUNT(unit_price * transaction_id), 1)
+	OVER (ORDER BY MONTH(transaction_date)) * 100 As mom_increase_percentage
+FROM
+	coffee_shop_sales
+WHERE
+	MONTH(transaction_date) IN (4, 5) -- for months of april and may
+GROUP BY 
+	MONTH(transaction_date)
+    
 
-Tech Stack
-Database: MySQL (Data validation and KPI calculation)
+SELECT SUM(transaction_qty) AS Total_Quantity_Sold
+FROM coffee_shop_sales
+WHERE
+MONTH(transaction_date) = 6 -- june Month
 
-Visualization: Power BI Desktop
+SELECT
+    SUM(unit_price * transaction_qty) AS Total_sales,
+    SUM(transaction_qty) AS Total_Qty_Sold,
+    COUNT(transaction_id) AS Total_Orders
+FROM coffee_shop_sales
+WHERE 
+    transaction_date = '2023-05-18'
 
-Data Source: Excel / CSV
 
-Language: SQL, DAX
 
-Project Workflow
-Part 1: SQL Database & Querying
 
-Within this part, the raw data was uploaded to MySQL database. Thereafter, complex queries were launched in order to get the results related to:
-
-Sales within particular months.
-
-Change in sales between particular months.
-
-Day-by-day trend analysis of sales in order to detect peak time and peak days.
-
-Part 2: Power BI Dashboarding
-
-By connecting Power BI to MySQL (Excel), we created an interactive dashboard that included:
-
-Calendar Heatmap visualizations: Day density map of sales.
-
-Tooltips: Interactive tooltips.
-
-Advanced DAX usage: MoM calculation, average sales lines.
-
-Slicers & Filters: Store location, product category and Month.
+    
