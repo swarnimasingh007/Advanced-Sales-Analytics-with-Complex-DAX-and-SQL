@@ -1,109 +1,43 @@
-CREATE DATABASE coffee_shop_sales_db
+Project Overview
+The current project represents a full-fledged Data Analytics solution aimed at tracking the performance of a coffee shop in various locations. The technologies utilized within the project include the utilization of MySQL for data querying and validation purposes and Power BI for data visualization and dashboarding purposes.
 
-SELECT * FROM coffee_shop_sales
+Features & KPIs
+Within the current project, the key focus will be laid on the following KPIs and their analysis according to Month-over-Month change:
 
-DESCRIBE coffee_shop_sales
+Total Sales Analysis: Revenue analysis and its MoM changes.
 
-SET SQL_SAFE_UPDATES = 0;
-UPDATE coffee_shop_sales
-SET transaction_date = STR_TO_DATE(transaction_date, '%d/%m/%Y');
-SET SQL_SAFE_UPDATES = 1;
+Total Orders Analysis: Total number of orders.
 
+Total Quantity Sold: Number of products sold.
 
-ALTER TABLE coffee_shop_sales
-MODIFY COLUMN transaction_date DATE;
+Tech Stack
+Database: MySQL (Data validation and KPI calculation)
 
+Visualization: Power BI Desktop
 
-SET SQL_SAFE_UPDATES = 0;
-UPDATE coffee_shop_sales
-SET transaction_time = STR_TO_DATE(transaction_time, '%H:%i:%s');
-SET SQL_SAFE_UPDATES = 1;
+Data Source: Excel / CSV
 
-ALTER TABLE coffee_shop_sales
-MODIFY COLUMN transaction_time TIME;
+Language: SQL, DAX
 
+Project Workflow
+Part 1: SQL Database & Querying
 
-SELECT SUM(unit_price * transaction_qty) AS Total_Sales
-FROM coffee_shop_sales
-WHERE
-MONTH(transaction_date) = 5 -- May Month
+Within this part, the raw data was uploaded to MySQL database. Thereafter, complex queries were launched in order to get the results related to:
 
+Sales within particular months.
 
+Change in sales between particular months.
 
-SELECT ROUND(SUM(unit_price * transaction_qty),1) AS Total_Sales
-FROM coffee_shop_sales
-WHERE
-MONTH(transaction_date) = 3 -- May Month
+Day-by-day trend analysis of sales in order to detect peak time and peak days.
 
+Part 2: Power BI Dashboarding
 
+By connecting Power BI to MySQL (Excel), we created an interactive dashboard that included:
 
-SELECT
-	MONTH(transaction_date) As month, -- no of month
-    ROUND(SUM(unit_price * transaction_qty)) As total_sales, -- total sales column
-    (SUM(unit_price * transaction_qty) - LAG(SUM(unit_price * transaction_qty), 1) -- month sales difference
-    OVER (ORDER BY MONTH(transaction_date))) / LAG(SUM(unit_price * transaction_qty), 1)
-	OVER (ORDER BY MONTH(transaction_date)) * 100 As mom_increase_percentage -- percentage
-FROM
-	coffee_shop_sales
-WHERE
-	MONTH(transaction_date) IN (4, 5) -- for months of april(PM) and may(CM)
-GROUP BY 
-	MONTH(transaction_date)
-ORDER BY
-    MONTH(transaction_date);
-    
-    
-    
-SELECT COUNT(transaction_id) AS Total_Sales
-FROM coffee_shop_sales
-WHERE
-MONTH(transaction_date) = 5 -- May Month
-    
-    
-    
-SELECT
-	MONTH(transaction_date) As month,
-    ROUND(COUNT(transaction_id)) As total_sales,
-    (COUNT(transaction_id) - LAG(COUNT(transaction_id), 1)
-    OVER (ORDER BY MONTH(transaction_date))) / LAG(COUNT(transaction_id), 1)
-	OVER (ORDER BY MONTH(transaction_date)) * 100 As mom_increase_percentage
-FROM
-	coffee_shop_sales
-WHERE
-	MONTH(transaction_date) IN (4, 5) -- for months of april and may
-GROUP BY 
-	MONTH(transaction_date)
-ORDER BY
-    MONTH(transaction_date);
-        
+Calendar Heatmap visualizations: Day density map of sales.
 
-SELECT SUM(transaction_qty) AS Total_Quantity_Sold
-FROM coffee_shop_sales
-WHERE
-MONTH(transaction_date) = 5 -- may Month
+Tooltips: Interactive tooltips.
 
+Advanced DAX usage: MoM calculation, average sales lines.
 
-SELECT SUM(transaction_qty) AS Total_Quantity_Sold
-FROM coffee_shop_sales
-WHERE
-MONTH(transaction_date) = 6 -- june Month
-
-
-SELECT
-	MONTH(transaction_date) As month,
-    ROUND(SUM(transaction_qty)) As total_quantity_sold,
-    (SUM(transaction_qty) - LAG(SUM(transaction_qty), 1)
-    OVER (ORDER BY MONTH(transaction_date))) / LAG(SUM(transaction_qty), 1)
-	OVER (ORDER BY MONTH(transaction_date)) * 100 As mom_increase_percentage
-FROM
-	coffee_shop_sales
-WHERE
-	MONTH(transaction_date) IN (4, 5) -- for months of april and may
-GROUP BY 
-	MONTH(transaction_date)
-ORDER BY
-    MONTH(transaction_date);
-        
-
-
-    
+Slicers & Filters: Store location, product category and Month.
